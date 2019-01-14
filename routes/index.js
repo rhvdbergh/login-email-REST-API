@@ -2,6 +2,16 @@ var express = require('express');
 var router = express.Router();
 var User = require('../schemas/UserSchema');
 
+// authentication middleware - check if user is loggend in
+function isLoggedIn(req, res, next){
+  if(req.session && req.session.userID) {
+    next();
+  }
+  else {
+    res.redirect("/login-user");
+  }
+}
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -51,6 +61,7 @@ router.post('/login-user', function(req, res, next) {
           return next(err);
         } else {
           req.session.userId = user._id;
+          req.session.userName = user.email;
           return res.redirect('/success');
         }
       }) // end user User.authenticate
@@ -62,8 +73,22 @@ router.post('/login-user', function(req, res, next) {
 })
 
 /* GET success for login */
-router.get('/success', function(req, res, next) {
-  res.render('success', {});
+router.get('/success', isLoggedIn, function(req, res, next) {
+  res.render('success', {user: req.session.userName});
 })
+
+// GET /logout
+router.get('/logout', function(req, res, next) {
+  if (req.session) {
+    // delete session object
+    req.session.destroy(function(err) {
+      if(err) {
+        return next(err);
+      } else {
+        return res.redirect('/');
+      }
+    });
+  }
+});
 
 module.exports = router;
