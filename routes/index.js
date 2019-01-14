@@ -4,7 +4,7 @@ var User = require('../schemas/UserSchema');
 
 // authentication middleware - check if user is loggend in
 function isLoggedIn(req, res, next){
-  if(req.session && req.session.userID) {
+  if(req.session && req.session.userId) {
     next();
   }
   else {
