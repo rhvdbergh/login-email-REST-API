@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //use sessions for tracking logins
 app.use(session({
-  secret: 'work hard',
+  secret: process.env.SESSION_SECRET,
   resave: true,
   saveUninitialized: false
 }));
