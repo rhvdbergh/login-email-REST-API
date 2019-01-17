@@ -1,9 +1,87 @@
 var express = require('express');
 var router = express.Router();
+var User = require('../schemas/UserSchema');
+var isLoggedIn = require('./isLoggedIn.js');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
+});
+
+/* GET create user page. */
+router.get('/create', function(req, res, next) {
+  res.render('createUser', {});
+})
+
+/* POST create user */
+router.post('/create', function(req, res, next) {
+  if (req.body.userName &&
+    req.body.email &&
+    req.body.password &&
+    req.body.passwordConf) {
+      console.log('create user account request received');
+    var userData = {
+      userName: req.body.userName,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConf: req.body.passwordConf,
+    }
+    //use schema.create to insert data into the db
+    User.create(userData, function (err, user) {
+      if (err) {
+        return next(err)
+      } else {
+        return res.redirect('/');
+      }
+    });
+  } 
+})
+
+/* GET login user page. */
+router.get('/login', function(req, res, next) {
+  res.render('loginUser', {});
+})
+
+/* POST create user */
+router.post('/login', function(req, res, next) {
+  if (req.body.email &&
+    req.body.password) {
+      console.log('login user account request received');
+      User.authenticate(req.body.email, req.body.password, function(error, user) {
+        if (error || !user) {
+          var err = new Error('Wrong email or password.');
+          err.status = 401;
+          return next(err);
+        } else {
+          req.session.userId = user._id;
+          req.session.userName = user.userName;
+          return res.redirect('/users/success');
+        }
+      }) // end user User.authenticate
+  } else {
+    var err = new Error('All fields required.');
+    err.status = 400;
+    return next(err);
+  }
+})
+
+/* GET success for login */
+router.get('/success', isLoggedIn, function(req, res, next) {
+  res.render('success', {user: req.session.userName});
+})
+
+// GET /logout
+router.get('/logout', function(req, res, next) {
+  if (req.session) {
+    // delete session object
+    req.session.destroy(function(err) {
+      if(err) {
+        return next(err);
+      } else {
+        return res.redirect('/');
+      }
+    });
+  }
 });
 
 module.exports = router;
