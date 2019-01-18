@@ -55,7 +55,8 @@ router.post('/login', function(req, res, next) {
         } else {
           req.session.userId = user._id;
           req.session.userName = user.userName;
-          return res.json({
+          console.log('user logged in');
+          res.json({
             userId: user._id,
             userName: user.userName
           })
