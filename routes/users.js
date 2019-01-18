@@ -42,7 +42,7 @@ router.get('/login', function(req, res, next) {
   res.render('loginUser', {});
 })
 
-/* POST create user */
+/* POST login user */
 router.post('/login', function(req, res, next) {
   if (req.body.email &&
     req.body.password) {
@@ -55,7 +55,10 @@ router.post('/login', function(req, res, next) {
         } else {
           req.session.userId = user._id;
           req.session.userName = user.userName;
-          return res.redirect('/users/success');
+          return res.json({
+            userId: user._id,
+            userName: user.userName
+          })
         }
       }) // end user User.authenticate
   } else {
