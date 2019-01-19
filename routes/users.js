@@ -104,7 +104,9 @@ router.get('/logout', function(req, res, next) {
 /* GET test for being logged in */
 router.get('/test', isLoggedIn, function(req, res, next) {
   res.json({
-    message: 'test success: user logged in'
+    message: 'test success: user logged in',
+    userName: req.session.userName,
+    userId: req.session.userId
   })
 });
 
