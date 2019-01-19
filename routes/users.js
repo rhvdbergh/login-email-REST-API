@@ -101,4 +101,11 @@ router.get('/logout', function(req, res, next) {
   }
 });
 
+/* GET test for being logged in */
+router.get('/test', isLoggedIn, function(req, res, next) {
+  res.json({
+    message: 'test success: user logged in'
+  })
+});
+
 module.exports = router;
