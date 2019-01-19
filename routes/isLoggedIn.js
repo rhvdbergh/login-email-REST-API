@@ -4,7 +4,9 @@ var isLoggedIn = function (req, res, next){
     next();
   }
   else {
-    res.redirect("/users/login");
+    res.json({
+      message: 'user not logged in'
+    });
   }
 }
 
