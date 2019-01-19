@@ -38,7 +38,7 @@ router.post('/create', function(req, res, next) {
         console.log('user created');
         res.json({
           message: 'success',
-          userName: req.body.userName
+          userName: userData.userName
         });
       }
     });
@@ -57,9 +57,9 @@ router.post('/login', function(req, res, next) {
       console.log('login user account request received');
       User.authenticate(req.body.email, req.body.password, function(error, user) {
         if (error || !user) {
-          var err = new Error('Wrong email or password.');
-          err.status = 401;
-          return next(err);
+          res.json({
+            message: 'Wrong email or password.'
+          })
         } else {
           req.session.userId = user._id;
           req.session.userName = user.userName;
@@ -91,7 +91,9 @@ router.get('/logout', function(req, res, next) {
       if(err) {
         return next(err);
       } else {
-        return res.redirect('/');
+        res.json({
+          message: 'succes - user logged out'
+        });
       }
     });
   }
