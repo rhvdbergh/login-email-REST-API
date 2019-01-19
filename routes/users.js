@@ -74,9 +74,9 @@ router.post('/login', function(req, res, next) {
         }
       }) // end user User.authenticate
   } else {
-    var err = new Error('All fields required.');
-    err.status = 400;
-    return next(err);
+    res.json({
+      message: 'All fields required.'
+    })
   }
 })
 
