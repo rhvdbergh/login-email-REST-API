@@ -29,9 +29,17 @@ router.post('/create', function(req, res, next) {
     //use schema.create to insert data into the db
     User.create(userData, function (err, user) {
       if (err) {
-        return next(err)
+        console.log('error:', err);
+        res.json({
+          message: 'error',
+          error: err
+        })
       } else {
-        return res.redirect('/');
+        console.log('user created');
+        res.json({
+          message: 'success',
+          userName: req.body.userName
+        });
       }
     });
   } 
