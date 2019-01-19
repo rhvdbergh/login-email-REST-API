@@ -35,7 +35,9 @@ router.post('/create', function(req, res, next) {
           error: err
         })
       } else {
-        console.log('user created');
+        console.log('user created', user._id);
+        req.session.userId = user._id;
+        req.session.userName = user.userName;
         res.json({
           message: 'success',
           userName: userData.userName
