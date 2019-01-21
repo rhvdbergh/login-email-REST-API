@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var User = require('../schemas/UserSchema');
 var isLoggedIn = require('./isLoggedIn.js');
+var validator = require('validator');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -20,42 +21,46 @@ router.post('/create', function(req, res, next) {
     req.body.password &&
     req.body.passwordConf) {
       console.log('create user account request received');
-    
-    if (req.body.password===req.body.passwordConf) {
-    var userData = {
-      userName: req.body.userName,
-      email: req.body.email,
-      password: req.body.password,
-      passwordConf: req.body.passwordConf,
-    }
-    //use schema.create to insert data into the db
-    User.create(userData, function (err, user) {
-      if (err) {
-        console.log('User creation error:', err.code);
-        if (err.code === 11000) { // MongoError: duplicate entry
-          const errMsg = new Error('This email address is already associated with an account.');
-          next(errMsg);
-        } else {
-          const errMsg = new Error('Error: Unable to create user.');
-          next(errMsg);
+    if (validator.isEmail(req.body.email)) {
+      if (req.body.password===req.body.passwordConf) {
+        var userData = {
+          userName: req.body.userName,
+          email: req.body.email,
+          password: req.body.password,
+          passwordConf: req.body.passwordConf,
         }
-      } else {
-        console.log('user created', user._id);
-        req.session.userId = user._id;
-        req.session.userName = user.userName;
-        res.json({
-          message: 'success',
-          userName: userData.userName,
-          userId: user._id
+        //use schema.create to insert data into the db
+        User.create(userData, function (err, user) {
+          if (err) {
+            console.log('User creation error:', err.code);
+            if (err.code === 11000) { // MongoError: duplicate entry
+              const errMsg = new Error('This email address is already associated with an account.');
+              next(errMsg);
+            } else {
+              const errMsg = new Error('Error: Unable to create user.');
+              next(errMsg);
+            }
+          } else {
+            console.log('user created', user._id);
+            req.session.userId = user._id;
+            req.session.userName = user.userName;
+            res.json({
+              message: 'success',
+              userName: userData.userName,
+              userId: user._id
+            });
+          }
         });
+      } else { // password and passwordConf did not match
+        console.log('error: password and password confirmation did not match; user not created')
+        const err = new Error('password and password confirmation did not match')
       }
-    });
-  } else { // password and passwordConf did not match
-    console.log('error: password and password confirmation did not match; user not created')
-    res.json({
-      message: 'error: password and password confirmation did not match'
-    })
-  }
+    } else {
+      console.log('error: user entered unacceptable email');
+      res.json({  
+        message: 'error: user entered unacceptable email'
+      })
+    }
   } 
 })
 
