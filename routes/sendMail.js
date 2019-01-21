@@ -2,7 +2,7 @@
 const nodemailer = require("nodemailer");
 
 // async..await is not allowed in global scope, must use a wrapper
-async function sendMail(){
+async function sendMail(userName, userEmail, subject, message){
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
@@ -18,10 +18,10 @@ async function sendMail(){
   // setup email data with unicode symbols
   let mailOptions = {
     from: '"Signie" <signupfrustration@gmail.com>', // sender address
-    to: "rhvdbergh@gmail.com", // list of receivers
-    subject: "Hello", // Subject line
-    text: "Hello world!", // plain text body
-    html: "<b>Hello world?</b>" // html body
+    to: userEmail, // list of receivers
+    subject: subject, // Subject line
+    text: message, // plain text body
+    html: `<b>${message}</b>` // html body
   };
 
   // send mail with defined transport object

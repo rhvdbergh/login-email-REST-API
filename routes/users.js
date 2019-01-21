@@ -4,6 +4,7 @@ var User = require('../schemas/UserSchema');
 var isLoggedIn = require('./isLoggedIn.js');
 var validator = require('validator');
 var mail = require('./sendMail.js');
+var crypto = require('crypto');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -30,8 +31,6 @@ router.post('/create', function(req, res, next) {
           password: req.body.password,
           passwordConf: req.body.passwordConf,
         }
-        mail.sendMail();
-        console.log('mail fired');
         //use schema.create to insert data into the db
         User.create(userData, function (err, user) {
           if (err) {
@@ -52,6 +51,7 @@ router.post('/create', function(req, res, next) {
               userName: userData.userName,
               userId: user._id
             });
+            mail.sendMail(user.userName, user.email, 'Welcome to Washington Camptrader', `Welcome to Washington Camptrader, ${user.userName}!`);
           }
         });
       } else { // password and passwordConf did not match
