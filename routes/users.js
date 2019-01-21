@@ -6,6 +6,7 @@ var validator = require('validator');
 var mail = require('./sendMail.js');
 var crypto = require('crypto');
 
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -126,6 +127,49 @@ router.get('/test', isLoggedIn, function(req, res, next) {
     userName: req.session.userName,
     userId: req.session.userId
   })
+});
+
+/* POST user password reset request */
+router.post('/reset', function(req, res, next) {
+  console.log('password reset received');
+  async.waterfall([
+    function(done) {
+      crypto.randomBytes(20, function(err, buf) {
+        var token = buf.toString('hex');
+        done(err, token);
+      });
+    },
+    function(token, done) {
+      User.findOne({ email: req.body.email }, function(err, user) {
+        if (!user) {
+          const err = new Error('No account with that email address exists.')
+          next(err);
+        }
+
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // password token will expire in 1 hour
+
+        user.save(function(err) {
+          done(err, token, user);
+        });
+      });
+    },
+    function(token, user, done) {
+      const subject = 'Washington Camptrader Password Reset Request';
+      const msg = 'You are receiving this message because you (or someone else) requested that a reset of your Washington Camptrader account password.\n\n' +
+        'To reset your password, please click on the following link, or paste this link into your browser.\n\n'
+        'http://' + req.headers.post + '/reset/' + token + '\n\n' +
+        'If you did not request a password reset, please ignore this email. Your password will remain unchanged.\n'
+      mail.sendMail(user.userName, user.email, subject, msg);
+      console.log('User', user.email, 'password reset email request email send attempt.');
+    }
+  ], function(err) {
+    if (err) return next(err);
+    res.json({
+      message: 'Password reset email sent.',
+      userName: 'yes'
+    });
+  });
 });
 
 module.exports = router;
