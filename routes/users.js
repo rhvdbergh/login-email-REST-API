@@ -3,9 +3,7 @@ var router = express.Router();
 var User = require('../schemas/UserSchema');
 var isLoggedIn = require('./isLoggedIn.js');
 var validator = require('validator');
-var sendMail = require('./routes/sendMail.js');
-
-sendMail();
+var mail = require('./sendMail.js');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -32,6 +30,8 @@ router.post('/create', function(req, res, next) {
           password: req.body.password,
           passwordConf: req.body.passwordConf,
         }
+        mail.sendMail();
+        console.log('mail fired');
         //use schema.create to insert data into the db
         User.create(userData, function (err, user) {
           if (err) {
