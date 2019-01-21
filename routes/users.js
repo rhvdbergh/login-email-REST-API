@@ -20,6 +20,8 @@ router.post('/create', function(req, res, next) {
     req.body.password &&
     req.body.passwordConf) {
       console.log('create user account request received');
+    
+    if (req.body.password===req.body.passwordConf) {
     var userData = {
       userName: req.body.userName,
       email: req.body.email,
@@ -44,6 +46,12 @@ router.post('/create', function(req, res, next) {
         });
       }
     });
+  } else { // password and passwordConf did not match
+    console.log('error: password and password confirmation did not match; user not created')
+    res.json({
+      message: 'error: password and password confirmation did not match'
+    })
+  }
   } 
 })
 
