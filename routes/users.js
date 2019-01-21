@@ -3,6 +3,9 @@ var router = express.Router();
 var User = require('../schemas/UserSchema');
 var isLoggedIn = require('./isLoggedIn.js');
 var validator = require('validator');
+var sendMail = require('./routes/sendMail.js');
+
+sendMail();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
