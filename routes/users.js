@@ -31,18 +31,22 @@ router.post('/create', function(req, res, next) {
     //use schema.create to insert data into the db
     User.create(userData, function (err, user) {
       if (err) {
-        console.log('error:', err);
-        res.json({
-          message: 'error',
-          error: err
-        })
+        console.log('User creation error:', err.code);
+        if (err.code === 11000) { // MongoError: duplicate entry
+          const errMsg = new Error('This email address is already associated with an account.');
+          next(errMsg);
+        } else {
+          const errMsg = new Error('Error: Unable to create user.');
+          next(errMsg);
+        }
       } else {
         console.log('user created', user._id);
         req.session.userId = user._id;
         req.session.userName = user.userName;
         res.json({
           message: 'success',
-          userName: userData.userName
+          userName: userData.userName,
+          userId: user._id
         });
       }
     });
@@ -67,9 +71,8 @@ router.post('/login', function(req, res, next) {
       console.log('login user account request received');
       User.authenticate(req.body.email, req.body.password, function(error, user) {
         if (error || !user) {
-          res.json({
-            message: 'Wrong email or password.'
-          })
+          const err = new Error('Wrong email or password.');
+          next(err);
         } else {
           req.session.userId = user._id;
           req.session.userName = user.userName;
@@ -82,9 +85,8 @@ router.post('/login', function(req, res, next) {
         }
       }) // end user User.authenticate
   } else {
-    res.json({
-      message: 'All fields required.'
-    })
+    const err = new Error('All fields required.');
+    next(err);
   }
 })
 
