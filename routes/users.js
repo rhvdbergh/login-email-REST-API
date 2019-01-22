@@ -159,9 +159,9 @@ router.post('/reset', function(req, res, next) {
     },
     function(token, user, done) {
       const subject = 'Washington Camptrader Password Reset Request';
-      const msg = 'You are receiving this message because you (or someone else) requested that a reset of your Washington Camptrader account password.<br><br>' +
+      const msg = 'You are receiving this message because you (or someone else) requested a reset of your Washington Camptrader account password.<br><br>' +
         'To reset your password, please click on the following link, or paste this link into your browser.<br><br>' +
-        'http://localhost:3001/users/reset/token/' + token + '<br><br>' +
+        'http://localhost:3000/reset/' + token + '<br><br>' +
         'If you did not request a password reset, please ignore this email. Your password will remain unchanged.<br>'
       mail.sendMail(user.userName, user.email, subject, msg);
       console.log('User', user.email, 'password reset email request email send attempt.');
@@ -176,6 +176,16 @@ router.post('/reset', function(req, res, next) {
         message: err
       })
     }
+  });
+});
+
+router.get('/reset/token/:token', function(req, res) {
+  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
+    if (!user) {
+      const errMsg = new Error('Invalid or expired password reset token.');
+      next(errMsg);
+    }
+    res.redirect('http://localhost:3000');
   });
 });
 
