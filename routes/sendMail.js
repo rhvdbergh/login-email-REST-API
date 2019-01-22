@@ -21,7 +21,7 @@ async function sendMail(userName, userEmail, subject, message){
     to: userEmail, // list of receivers
     subject: subject, // Subject line
     text: message, // plain text body
-    html: `<b>${message}</b>` // html body
+    html: `<p>${message}</p>` // html body
   };
 
   // send mail with defined transport object
