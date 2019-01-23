@@ -56,7 +56,7 @@ router.post('/create', function(req, res, next) {
               userName: userData.userName,
               userId: user._id
             });
-            mail.sendMail(user.userName, user.email, `Welcome to ${APP_NAME}`, `Welcome to ${APP_NAME}, ${user.userName}!<br><br>Your account has been successfully created.`);
+            mail.sendMail(user.email, `Welcome to ${APP_NAME}`, `Welcome to ${APP_NAME}, ${user.userName}!<br><br>Your account has been successfully created.`);
           }
         });
       } else { // password and passwordConf did not match
@@ -169,7 +169,7 @@ router.post('/reset', function(req, res, next) {
         'To reset your password, please click on the following link, or paste this link into your browser.<br><br>' +
         'http://localhost:3000/reset/' + token + '<br><br>' +
         'If you did not request a password reset, please ignore this email. Your password will remain unchanged.<br>'
-      mail.sendMail(user.userName, user.email, subject, msg);
+      mail.sendMail(user.email, subject, msg);
       console.log('User', user.email, 'password reset email request email send attempt.');
       res.json({
         message: 'Password reset email sent.',
@@ -201,7 +201,7 @@ router.post('/reset/token/:token', function(req, res, next) {
 
       console.log(`User ${user.email}'s password has been reset.'`)
 
-      mail.sendMail(user.userName, user.email, 'Your password was changed', `This email confirms that your ${APP_NAME} account password has successfully been changed.`);
+      mail.sendMail(user.email, 'Your password was changed', `This email confirms that your ${APP_NAME} account password has successfully been changed.`);
       
       res.json({
         message: 'success',
