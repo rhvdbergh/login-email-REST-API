@@ -143,6 +143,7 @@ router.post('/reset', function(req, res, next) {
     function(token, done) {
       User.findOne({ email: req.body.email }, function(err, user) {
         if (!user) {
+          console.log('User account not found.');
           res.json({
             message: 'User account not found.'
           })
@@ -179,13 +180,19 @@ router.post('/reset', function(req, res, next) {
   });
 });
 
-router.get('/reset/token/:token', function(req, res) {
+/* POST reset user password with token */
+router.post('/reset/token/:token', function(req, res, next) {
   User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function(err, user) {
     if (!user) {
       const errMsg = new Error('Invalid or expired password reset token.');
       next(errMsg);
-    }
-    res.redirect('http://localhost:3000');
+    } else {
+      console.log('Found user with token. Ready to reset password?');
+      res.json({
+        message: 'success',
+        userName: 'anonymous'
+      }); 
+    } // end if ... else
   });
 });
 
