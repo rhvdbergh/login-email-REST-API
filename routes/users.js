@@ -7,6 +7,9 @@ var mail = require('./sendMail.js');
 var crypto = require('crypto');
 var async = require('async');
 
+// Variables to set for code reuse
+const APP_NAME = 'Washington Camptrader'
+
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -53,7 +56,7 @@ router.post('/create', function(req, res, next) {
               userName: userData.userName,
               userId: user._id
             });
-            mail.sendMail(user.userName, user.email, 'Welcome to Washington Camptrader', `Welcome to Washington Camptrader, ${user.userName}!`);
+            mail.sendMail(user.userName, user.email, `Welcome to ${APP_NAME}`, `Welcome to ${APP_NAME}, ${user.userName}!<br><br>Your account has been successfully created.`);
           }
         });
       } else { // password and passwordConf did not match
@@ -197,6 +200,8 @@ router.post('/reset/token/:token', function(req, res, next) {
       user.save();
 
       console.log(`User ${user.email}'s password has been reset.'`)
+
+      mail.sendMail(user.userName, user.email, 'Your password was changed', `This email confirms that your ${APP_NAME} account password has successfully been changed.`);
       
       res.json({
         message: 'success',
