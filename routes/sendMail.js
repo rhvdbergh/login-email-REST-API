@@ -7,7 +7,7 @@ const HOST = 'smtp.gmail.com';
 const PORT = 465; 
 
 // async..await is not allowed in global scope, must use a wrapper
-async function sendMail(userName, userEmail, subject, message){
+async function sendMail(userEmail, subject, message){
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
