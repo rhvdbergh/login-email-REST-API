@@ -82,6 +82,7 @@ router.post('/login', function(req, res, next) {
       User.authenticate(req.body.email, req.body.password, function(error, user) {
         if (error || !user) {
           const err = new Error('Wrong email or password.');
+          err.status = 403; // forbidden
           next(err);
         } else {
           req.session.userId = user._id;
@@ -96,6 +97,7 @@ router.post('/login', function(req, res, next) {
       }) // end user User.authenticate
   } else {
     const err = new Error('All fields required.');
+    err.status = 403; // forbidden
     next(err);
   }
 })
@@ -187,7 +189,15 @@ router.post('/reset/token/:token', function(req, res, next) {
       const errMsg = new Error('Invalid or expired password reset token.');
       next(errMsg);
     } else {
-      console.log('Found user with token. Ready to reset password?');
+      
+      user.password = req.body.password;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+
+      user.save();
+
+      console.log(`User ${user.email}'s password has been reset.'`)
+      
       res.json({
         message: 'success',
         userName: 'anonymous'
