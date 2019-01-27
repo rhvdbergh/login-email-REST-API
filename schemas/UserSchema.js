@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
+
 var userSchema = new mongoose.Schema({
   userName: {
     type: String,
@@ -44,7 +45,7 @@ userSchema.statics.authenticate = function (email, password, callback) {
     });
 }
 
-//hashing a password before saving it to the database
+//hash password before saving to the database
 userSchema.pre('save', function (next) {
   var user = this;
   bcrypt.hash(user.password, 10, function (err, hash){
@@ -57,4 +58,5 @@ userSchema.pre('save', function (next) {
 });
 
 var User = mongoose.model('User', userSchema);
+
 module.exports = User;
