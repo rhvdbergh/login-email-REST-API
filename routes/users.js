@@ -14,7 +14,7 @@ var mail = require('./sendMail.js');
 var User = require('../schemas/UserSchema');
 
 // Variables to set for code reuse
-const APP_NAME = 'Washington Camptrader'
+const APP_NAME = 'Default App Name'
 const DOMAIN_URL = 'http://localhost:3000'
 
 //**********************************/
