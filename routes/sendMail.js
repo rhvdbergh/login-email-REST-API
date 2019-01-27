@@ -2,7 +2,7 @@
 const nodemailer = require("nodemailer");
 
 // var to set for code reuse 
-const SENDER_EMAIL_ADDRESS = '"Signie" <signupfrustration@gmail.com>';
+const SENDER_EMAIL_ADDRESS = `"Signie" <${process.env.EMAIL_ACCOUNT}>`;
 const HOST = 'smtp.gmail.com';
 const PORT = 465; 
 
