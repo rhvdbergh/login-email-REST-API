@@ -1,7 +1,7 @@
 # REST API: Login System with Email Validation (Backend)
 
 ## Introduction
-This repo contains a login system REST API created with Express Generator using MongoDB. The response is in JSON. Passwords are hashed.
+This repo contains a login system REST API created with Express Generator using MongoDB. The response is in JSON. Passwords are hashed. Feel free to use any front end with the API; it would be easiest to host serve the front end html from the same server as the login system (e.g. from the `/public/` folder).
 
 ## Installation and Setup
 Fork this repo and run `npm install`. ENV variables need to be set OR replaced in the code. 
@@ -35,6 +35,7 @@ On success, a user will be created, automatically logged in, and the response wi
 Send a POST request to `/users/login` with the following object (use JSON.stringify()):
 * email
 * password
+
 On success, the user will be logged in and the response will be JSON:
 ```
 {
@@ -65,6 +66,7 @@ If the frontend needs to test whether the user is logged in or not, send a GET r
 ### User Password Request
 A user password request can be made by sending a request to `/users/reset` with the following object (use JSON.stringify()):
 * email
+
 On success, a token will be created and the response will be JSON:
 ```
 {
@@ -72,7 +74,11 @@ On success, a token will be created and the response will be JSON:
   userName: 'anonymous
 }
 ```
-A link will be sent to the user's email with a token in the URL. Tokens are valid for 15 minutes. The link will be `/users/reset/token/[random token]`. On success, an email will be sent to the user informing them of the change and the response will be in JSON:
+A link will be sent to the user's email with a token in the URL. Tokens are valid for 15 minutes. The link will be `/users/reset/[random token]`. This link will need to bring the user to a frontend page where a password and confirmation password can be submitted. These should be submitted to `/users/reset/token/[random token] with the following object (use JSON.stringify()):
+* password
+* passwordConf
+
+On success, an email will be sent to the user informing them of the change and the response will be in JSON:
 ```
 {
   message: 'success',
