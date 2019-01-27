@@ -94,8 +94,8 @@ router.post('/login', function(req, res, next) {
           // user logged in
           res.json({
             message: 'success',
-            userId: user._id,
-            userName: user.userName
+            userName: user.userName,
+            userId: user._id
           });
         }
       }); // end user User.authenticate
