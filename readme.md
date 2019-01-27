@@ -21,6 +21,7 @@ Send a POST request to `/users/create` with the following object (use JSON.strin
 * email
 * password
 * passwordConf
+
 On success, a user will be created, automatically logged in, and the response will be JSON: 
 ```
 {
